@@ -1,30 +1,33 @@
-const express = require('express');
 const QRCode = require('qrcode');
-const path = require('path');
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+// Define the serverless function to handle requests
+module.exports = async (req, res) => {
+  // Enable CORS (Cross-Origin Resource Sharing)
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+  // Handle OPTIONS request for CORS preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-app.get('/generate', async (req, res) => {
-    const { link } = req.query;
+  // Get the `link` query parameter from the request
+  const { link } = req.query;
 
-    if (!link) {
-        return res.status(400).send('Please provide a valid link!');
-    }
+  if (!link) {
+    return res.status(400).json({ error: 'Missing "link" parameter' });
+  }
 
-    try {
-        // Generate QR code in SVG format
-        const svg = await QRCode.toString(link, { type: 'svg' });
-        res.setHeader('Content-Type', 'image/svg+xml');
-        res.send(svg);
-    } catch (error) {
-        res.status(500).send('Error generating QR code.');
-    }
-});
+  try {
+    // Generate the QR code in SVG format
+    const qrCodeSvg = await QRCode.toString(link, { type: 'svg' });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+    // Set response headers to return SVG
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.status(200).send(qrCodeSvg);
+  } catch (error) {
+    console.error('Error generating QR code:', error);
+    res.status(500).json({ error: 'Failed to generate QR code' });
+  }
+};
