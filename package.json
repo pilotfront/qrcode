@@ -1,0 +1,16 @@
+{
+  "name": "qr-code-generator",
+  "version": "1.0.0",
+  "description": "A QR code generator with download functionality deployed on Vercel.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["QR Code", "Generator", "Express", "SVG", "Vercel"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "qrcode": "^1.5.1"
+  }
+}
