@@ -80,22 +80,11 @@ module.exports = async (req, res) => {
 // Function to log data into log.json file
 function logRequest(logData) {
   const logFilePath = path.join(__dirname, 'log.json');
-  
-  // Read existing logs, append new log, and save back to the file
-  fs.readFile(logFilePath, 'utf8', (err, data) => {
-    let logs = [];
-    if (!err && data) {
-      logs = JSON.parse(data);  // Parse existing log data if file exists
+
+  // Append the log entry to the log.json file
+  fs.appendFile(logFilePath, JSON.stringify(logData) + ',\n', (err) => {
+    if (err) {
+      console.error('Error writing log to file', err);
     }
-    
-    // Append new log entry
-    logs.push(logData);
-    
-    // Write logs back to the file
-    fs.writeFile(logFilePath, JSON.stringify(logs, null, 2), (err) => {
-      if (err) {
-        console.error('Error writing log to file', err);
-      }
-    });
   });
 }
