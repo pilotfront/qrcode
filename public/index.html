@@ -28,6 +28,11 @@
             margin-top: 20px;
             text-align: center;
         }
+        #qrPreview {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+        }
         #download {
             margin-top: 10px;
         }
@@ -40,6 +45,7 @@
         <button type="submit">Generate QR Code</button>
     </form>
     <div id="qrCode"></div>
+    <div id="qrPreview"></div>
     <a id="download" style="display: none;">Download QR Code</a>
 
     <script>
@@ -50,16 +56,19 @@
             if (!link) return;
 
             const qrCodeDiv = document.getElementById('qrCode');
+            const qrPreviewDiv = document.getElementById('qrPreview');
             const downloadLink = document.getElementById('download');
 
             qrCodeDiv.innerHTML = 'Generating...';
+            qrPreviewDiv.innerHTML = '';
             downloadLink.style.display = 'none';
 
             try {
                 const response = await fetch(`/generate?link=${encodeURIComponent(link)}`);
                 if (response.ok) {
                     const qrCodeSvg = await response.text();
-                    qrCodeDiv.innerHTML = qrCodeSvg;
+                    qrCodeDiv.innerHTML = 'Preview:';
+                    qrPreviewDiv.innerHTML = qrCodeSvg;
 
                     // Set up download link
                     const blob = new Blob([qrCodeSvg], { type: 'image/svg+xml' });
