@@ -2,8 +2,21 @@ const QRCode = require('qrcode');
 
 // Define the serverless function to handle requests
 module.exports = async (req, res) => {
-  // Enable CORS (Cross-Origin Resource Sharing)
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  // Get the Origin of the request
+  const origin = req.headers.origin;
+
+  // Allow only requests from www.pilotfront.com
+  const allowedOrigin = 'https://www.pilotfront.com';
+
+  if (origin === allowedOrigin) {
+    // Enable CORS (Cross-Origin Resource Sharing) only for the allowed origin
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  } else {
+    // If the origin is not allowed, reject the request with a 403 status
+    return res.status(403).json({ error: 'Forbidden: Invalid Origin' });
+  }
+
+  // Enable allowed methods and headers
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
